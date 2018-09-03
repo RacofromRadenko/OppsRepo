@@ -1,0 +1,211 @@
+<div class="container">
+  <div class="welcome" *ngIf="mainFlag">
+    <h1>Welcome to Cryptocurrency Arbitrage opportunities</h1>
+  </div>
+
+  <div *ngIf="!mainFlag" class="flag">
+    <img src="assets/img/loader.gif" alt="Loader">
+    <h1>Loading <span>.</span> <span>.</span> <span>.</span></h1>
+  </div>
+
+
+<div *ngIf="mainFlag">
+  
+  <div class="navigation"><button  class="col-log-3 btn btn-outline-primary" (click)="bestTenInPastFourHours()" >Past 4 Hours</button> 
+    <button  class="col-log-3 btn btn-outline-primary" (click)="bestFourInPastEightHours()" >Past 8 Hours</button> 
+    <button  class="col-log-3 btn btn-outline-primary" (click)="bestEightInPastSixteenHours()" >Past 16 Hours</button> 
+    <button class="col-log-3 btn btn-outline-primary" (click)="bestTwelveInTwentyFour()">Best periodical in past 24 Hours</button>
+    <button class="col-log-3 btn btn-outline-primary" (click)="bestFiftyInTwenyFour()">Best 50 in past 24 hours</button> <button class="col-log-3 btn btn-outline-primary" (click)="realTimeOpps()">Real time data</button> </div>
+    <div class="text-area">{{textArea}}</div>
+  <div *ngIf="tableFlag">
+  <table class="table table-bordered" *ngIf="flag">
+          <thead>
+            <tr>
+              <th scope="col" id="corner" class="heading-scope" >Traiding Pair</th>
+              <th scope="col" class="heading-scope" >Buy Exchange</th>
+              <th scope="col" class="heading-scope">Sell Exchange</th>
+              <th scope="col" class="heading-scope" >Highest bid Price</th>
+              <th scope="col" class="heading-scope" >Lowest ask price</th>
+              <th scope="col" class="heading-scope" >Spread</th>
+              <th scope="col" class="heading-scope" >Max volume</th>
+              <th scope="col" class="heading-scope" >Profit [%]</th>
+              <th scope="col" class="heading-scope"  >Time (GMT+2)</th>
+      
+            </tr>
+          </thead>
+          <tbody class="data-grid">
+              <tr  *ngFor="let oport of opportunitiesArray | paginate: {itemsPerPage:10, currentPage: p}; let i=index">
+                <td class="table-data">{{(oport.TradingPair)}}</td>
+                <td class="table-data">{{oport.BuyExchange}}</td>
+                <td class="table-data">{{oport.SellExchange}}</td>
+                <td class="table-data">{{oport.HighestBidPrice}}</td>
+                <td class="table-data">{{oport.LowestAskPrice}}</td>
+                <td class="table-data">{{oport.Spread}}</td>
+                <td class="table-data">{{oport.MaxVolume}}</td>
+                <td class="table-data">{{oport.Profit}}{{percentage}}</td>
+                <td class="table-data">{{oport.hTimeStamp}}</td>    
+              </tr>      
+          </tbody>
+      </table>
+      
+        <div class="page"  *ngIf="flag">
+            <pagination-controls (pageChange)="p = $event"></pagination-controls>
+          </div>
+      
+          <table class="table table-bordered" *ngIf="eightFlag">
+            <thead>
+              <tr>
+                <th scope="col" id="corner" class="heading-scope" >Traiding Pair</th>
+                <th scope="col" class="heading-scope" >Buy Exchange</th>
+                <th scope="col" class="heading-scope">Sell Exchange</th>
+                <th scope="col" class="heading-scope" >Highest bid Price</th>
+                <th scope="col" class="heading-scope" >Lowest ask price</th>
+                <th scope="col" class="heading-scope" >Spread</th>
+                <th scope="col" class="heading-scope" >Max volume</th>
+                <th scope="col" class="heading-scope" >Profit [%]</th>
+                <th scope="col" class="heading-scope" >Time (GMT+2)</th>
+        
+              </tr>
+            </thead>
+            <tbody class="data-grid">
+                <tr *ngFor="let bestInEightHours of bestInPastEightHours">
+                  <td class="table-data">{{(bestInEightHours.TradingPair)}}</td>
+                  <td class="table-data">{{bestInEightHours.BuyExchange}}</td>
+                  <td class="table-data">{{bestInEightHours.SellExchange}}</td>
+                  <td class="table-data">{{bestInEightHours.HighestBidPrice}}</td>
+                  <td class="table-data">{{bestInEightHours.LowestAskPrice}}</td>
+                  <td class="table-data">{{bestInEightHours.Spread}}</td>
+                  <td class="table-data">{{bestInEightHours.MaxVolume}}</td>
+                  <td class="table-data">{{bestInEightHours.Profit}}{{percentage}}</td>
+                  <td class="table-data">{{bestInEightHours.hTimeStamp}}</td>    
+                </tr>      
+            </tbody>
+          </table>
+
+          <table class="table table-bordered" *ngIf="sixteenFlag">
+            <thead>
+              <tr>
+                <th scope="col" id="corner" class="heading-scope" >Traiding Pair</th>
+                <th scope="col" class="heading-scope" >Buy Exchange</th>
+                <th scope="col" class="heading-scope">Sell Exchange</th>
+                <th scope="col" class="heading-scope" >Highest bid Price</th>
+                <th scope="col" class="heading-scope" >Lowest ask price</th>
+                <th scope="col" class="heading-scope" >Spread</th>
+                <th scope="col" class="heading-scope" >Max volume</th>
+                <th scope="col" class="heading-scope" >Profit [%]</th>
+                <th scope="col" class="heading-scope" >Time (GMT+2)</th>
+        
+              </tr>
+            </thead>
+            <tbody class="data-grid">
+                <tr *ngFor="let bestInSixteenHours of bestInPastSixteenHours">
+                  <td class="table-data">{{(bestInSixteenHours.TradingPair)}}</td>
+                  <td class="table-data">{{bestInSixteenHours.BuyExchange}}</td>
+                  <td class="table-data">{{bestInSixteenHours.SellExchange}}</td>
+                  <td class="table-data">{{bestInSixteenHours.HighestBidPrice}}</td>
+                  <td class="table-data">{{bestInSixteenHours.LowestAskPrice}}</td>
+                  <td class="table-data">{{bestInSixteenHours.Spread}}</td>
+                  <td class="table-data">{{bestInSixteenHours.MaxVolume}}</td>
+                  <td class="table-data">{{bestInSixteenHours.Profit}}{{percentage}}</td>
+                  <td class="table-data">{{bestInSixteenHours.hTimeStamp}}</td>    
+                </tr>      
+            </tbody>
+          </table>
+
+        <table class="table table-bordered" *ngIf="fourFlag">
+          <thead>
+            <tr>
+              <th scope="col" id="corner" class="heading-scope" >Traiding Pair</th>
+              <th scope="col" class="heading-scope" >Buy Exchange</th>
+              <th scope="col" class="heading-scope">Sell Exchange</th>
+              <th scope="col" class="heading-scope" >Highest bid Price</th>
+              <th scope="col" class="heading-scope" >Lowest ask price</th>
+              <th scope="col" class="heading-scope" >Spread</th>
+              <th scope="col" class="heading-scope" >Max volume</th>
+              <th scope="col" class="heading-scope" >Profit [%]</th>
+              <th scope="col" class="heading-scope" >Time (GMT+2)</th>
+      
+            </tr>
+          </thead>
+          <tbody class="data-grid">
+              <tr *ngFor="let bestInFourHours of bestTenInPast4Hours">
+                <td class="table-data">{{(bestInFourHours.TradingPair)}}</td>
+                <td class="table-data">{{bestInFourHours.BuyExchange}}</td>
+                <td class="table-data">{{bestInFourHours.SellExchange}}</td>
+                <td class="table-data">{{bestInFourHours.HighestBidPrice}}</td>
+                <td class="table-data">{{bestInFourHours.LowestAskPrice}}</td>
+                <td class="table-data">{{bestInFourHours.Spread}}</td>
+                <td class="table-data">{{bestInFourHours.MaxVolume}}</td>
+                <td class="table-data">{{bestInFourHours.Profit}}{{percentage}}</td>
+                <td class="table-data">{{bestInFourHours.hTimeStamp}}</td>    
+              </tr>      
+          </tbody>
+        </table>
+
+        <table class="table table-bordered" *ngIf="twentyFourFlag">
+          <thead>
+            <tr>
+              <th scope="col" id="corner" class="heading-scope" >Traiding Pair</th>
+              <th scope="col" class="heading-scope" >Buy Exchange</th>
+              <th scope="col" class="heading-scope">Sell Exchange</th>
+              <th scope="col" class="heading-scope" >Highest bid Price</th>
+              <th scope="col" class="heading-scope" >Lowest ask price</th>
+              <th scope="col" class="heading-scope" >Spread</th>
+              <th scope="col" class="heading-scope" >Max volume</th>
+              <th scope="col" class="heading-scope" >Profit [%]</th>
+              <th scope="col" class="heading-scope"  >Time (GMT+2)</th>
+      
+            </tr>
+          </thead>
+          <tbody class="data-grid">
+              <tr *ngFor="let bestTwelve of bestTwelveByProfitInPast24Hours ">
+                <td class="table-data">{{(bestTwelve.TradingPair)}}</td>
+                <td class="table-data">{{bestTwelve.BuyExchange}}</td>
+                <td class="table-data">{{bestTwelve.SellExchange}}</td>
+                <td class="table-data">{{bestTwelve.HighestBidPrice}}</td>
+                <td class="table-data">{{bestTwelve.LowestAskPrice}}</td>
+                <td class="table-data">{{bestTwelve.Spread}}</td>
+                <td class="table-data">{{bestTwelve.MaxVolume}}</td>
+                <td class="table-data">{{bestTwelve.Profit}}{{percentage}}</td>
+                <td class="table-data">{{bestTwelve.hTimeStamp}}</td>    
+              </tr>      
+          </tbody>
+        </table>
+      
+        <table class="table table-bordered" *ngIf="bestFifty">
+          <thead>
+            <tr>
+              <th scope="col" id="corner" class="heading-scope" >Traiding Pair</th>
+              <th scope="col" class="heading-scope" >Buy Exchange</th>
+              <th scope="col" class="heading-scope">Sell Exchange</th>
+              <th scope="col" class="heading-scope" >Highest bid Price</th>
+              <th scope="col" class="heading-scope" >Lowest ask price</th>
+              <th scope="col" class="heading-scope" >Spread</th>
+              <th scope="col" class="heading-scope" >Max volume</th>
+              <th scope="col" class="heading-scope" >Profit [%]</th>
+              <th scope="col" class="heading-scope"  >Time (GMT+2)</th>
+      
+            </tr>
+          </thead>
+          <tbody class="data-grid">
+              <tr *ngFor="let bestTwelve of bestFiftyByProfitInPast24Hours | paginate: { itemsPerPage: 10, currentPage: p } ">
+                <td class="table-data">{{(bestTwelve.TradingPair)}}</td>
+                <td class="table-data">{{bestTwelve.BuyExchange}}</td>
+                <td class="table-data">{{bestTwelve.SellExchange}}</td>
+                <td class="table-data">{{bestTwelve.HighestBidPrice}}</td>
+                <td class="table-data">{{bestTwelve.LowestAskPrice}}</td>
+                <td class="table-data">{{bestTwelve.Spread}}</td>
+                <td class="table-data">{{bestTwelve.MaxVolume}}</td>
+                <td class="table-data">{{bestTwelve.Profit}}{{percentage}}</td>
+                <td class="table-data">{{bestTwelve.hTimeStamp}}</td>    
+              </tr>      
+          </tbody>
+        </table>
+        <pagination-controls class="page" *ngIf="bestFifty" (pageChange)="p = $event"></pagination-controls>
+        <div class="downloadArea">  <button class="col-log-3 btn btn-outline-primary downloadButton" (click)="saveTextAsFile()" *ngIf="downloadFlag">Download</button></div>
+          <div class="copyright col-lg-12" id="mediaLink" *ngIf="mainFlag"> &copy; PozegaOffice 2018 / All rights reserved</div>  
+      </div>
+      
+    </div>
+</div>
+
