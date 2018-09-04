@@ -35,6 +35,10 @@ export class AppComponent {
 	downloadHelpArray = [];
 	textArea: string = '';
 
+	ethPrice = 289.14;
+	btcPrice = 7363.12;
+	usdtPrice = 0.99998;
+	eurPrice = 117;
 	constructor(public fetchFromBE: FetchDataService, public time: TimeServiceService) {
 		this.fetchDataFromBackend();
 		// this.fetchFromBE.dataBE.subscribe((result) => {
@@ -50,17 +54,26 @@ export class AppComponent {
 
 	fetchDataFromBackend() {
 		this.fetchFromBE.dataBE.subscribe((response) => {
+			for (let i = 0; i < response.arb_opportunities.length; i++) {
+				response.arb_opportunities[i]['calculatedProfit'] = null;
+				response.arb_opportunities[i]['calculatedProfitInUSD'] = null;
+				this.getPair(response.arb_opportunities);
+			}
 			if (response.arb_opportunities.length !== undefined) {
 				this.mainFlag = true;
-				this.helpArray = this.massiveHumanTimestamp(response.arb_opportunities);
 				this.opportunitiesArray = this.massiveHumanTimestamp(response.arb_opportunities);
+
+				console.log(this.opportunitiesArray);
+				this.helpArray = this.massiveHumanTimestamp(response.arb_opportunities);
 				this.profitForArrayOpps(this.opportunitiesArray);
 			} else {
 				this.object = response.arb_opportunities;
+				console.log('object', this.object);
 				this.opportunitiesArray.unshift(this.humanTimeStamp(response.arb_opportunities));
 				this.profitForObjectOpps(this.object);
 				this.opportunitiesArray.pop();
 			}
+
 			// this.opportunitiesArray = response.arb_opportunities;
 			// console.log('1', this.opportunitiesArray);
 			// if (typeof response.arb_opportunities !== 'undefined') {
@@ -129,7 +142,6 @@ export class AppComponent {
 
 	getTopOPps(startTime, endTime, topPlaces, inputArray) {
 		let result = [];
-
 		if (startTime < endTime) {
 			for (let i = 0; i < inputArray.length; i++) {
 				if (inputArray[i].Timestamp < endTime) {
@@ -313,6 +325,61 @@ export class AppComponent {
 		}
 		return res;
 	};
+
+	getPair(inputArrayOfOpps) {
+		let TradingPair = null;
+		let lastCharInString = null;
+		let lastThreeCharsInString = null;
+		let maxVolume = null;
+		let spread = null;
+		let USDT = null;
+		let USD = null;
+		let EUR = null;
+		let BTC = null;
+		let ETH = null;
+		let calculateProfit = null;
+		let calculateProfitInUSD = null;
+		let result = [];
+		for (let i = 0; i < inputArrayOfOpps.length; i++) {
+			TradingPair = inputArrayOfOpps[i].TradingPair;
+			// console.log(TradingPair);
+			lastCharInString = TradingPair.slice(-1);
+			lastThreeCharsInString = TradingPair.slice(-3);
+			if (lastCharInString === 'T') {
+				USDT = TradingPair.slice(-4);
+				maxVolume = inputArrayOfOpps[i].MaxVolume;
+				spread = inputArrayOfOpps[i].Spread;
+				inputArrayOfOpps.calculatedProfit = maxVolume * spread + ' USDT';
+				inputArrayOfOpps.calculatedProfitInUSD = maxVolume * spread * this.usdtPrice + ' $';
+			} else if (lastThreeCharsInString === 'ETH') {
+				ETH = TradingPair.slice(-3);
+				maxVolume = inputArrayOfOpps[i].MaxVolume;
+				spread = inputArrayOfOpps[i].Spread;
+				inputArrayOfOpps.calculatedProfit = maxVolume * spread + ' ETH';
+				inputArrayOfOpps.calculatedProfitInUSD = maxVolume * spread * this.ethPrice + ' $';
+			} else if (lastThreeCharsInString === 'USD') {
+				USD = TradingPair.slice(-3);
+				maxVolume = inputArrayOfOpps[i].MaxVolume;
+				spread = inputArrayOfOpps[i].Spread;
+				inputArrayOfOpps.calculatedProfit = maxVolume * spread + ' USD';
+				inputArrayOfOpps.calculatedProfitInUSD = maxVolume * spread * this.usdtPrice + ' $';
+			} else if (lastThreeCharsInString === 'BTC') {
+				BTC = TradingPair.slice(-3);
+				maxVolume = inputArrayOfOpps[i].MaxVolume;
+				spread = inputArrayOfOpps[i].Spread;
+				inputArrayOfOpps.calculatedProfit = maxVolume * spread + ' BTC';
+				inputArrayOfOpps.calculatedProfitInUSD = maxVolume * spread * this.btcPrice + ' $';
+			} else if (lastThreeCharsInString === 'EUR') {
+				EUR = TradingPair.slice(-3);
+				maxVolume = inputArrayOfOpps[i].MaxVolume;
+				spread = inputArrayOfOpps[i].Spread;
+				inputArrayOfOpps.calculatedProfit = maxVolume * spread + ' EUR';
+				inputArrayOfOpps.calculatedProfitInUSD = maxVolume * spread * this.eurPrice + ' $';
+			}
+		}
+
+		return inputArrayOfOpps.calculatedProfit, inputArrayOfOpps.calculatedProfitInUSD;
+	}
 
 	ngOnDestroy() {
 		// Only need to unsubscribe if its a multi event Observable
