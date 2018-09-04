@@ -51,7 +51,6 @@ export class WebsocketService {
 	}
 
 	getWSDateFormat(datesArr) {
-		console.log(datesArr);
 		let results = [];
 		datesArr.forEach((date) => {
 			var month = date.getMonth() + 1;

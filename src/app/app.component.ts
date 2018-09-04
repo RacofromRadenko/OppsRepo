@@ -2,6 +2,8 @@ import { Component, AfterViewInit, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { FetchDataService } from './services/FetchFromBe/fetch-data.service';
 import { TimeServiceService } from './services/time-service/time-service.service';
+import { HttpClient } from '@angular/common/http';
+import { ApiClientService } from './api-client/api-client.service';
 
 @Component({
 	selector: 'app-root',
@@ -36,11 +38,13 @@ export class AppComponent {
 	textArea: string = '';
 
 	ethPrice = 289.14;
-	btcPrice = 7363.12;
+	btcPrice: number = null
 	usdtPrice = 0.99998;
 	eurPrice = 117;
-	constructor(public fetchFromBE: FetchDataService, public time: TimeServiceService) {
+	constructor(public fetchFromBE: FetchDataService, public time: TimeServiceService, private api:ApiClientService) {
 		this.fetchDataFromBackend();
+		this.getCryptoValue();
+		
 		// this.fetchFromBE.dataBE.subscribe((result) => {
 		// 	if (typeof result.arb_opportunities !== 'undefined') {
 		// 		this.getOppsData = result.arb_opportunities;
@@ -57,29 +61,20 @@ export class AppComponent {
 			for (let i = 0; i < response.arb_opportunities.length; i++) {
 				response.arb_opportunities[i]['calculatedProfit'] = null;
 				response.arb_opportunities[i]['calculatedProfitInUSD'] = null;
-				this.getPair(response.arb_opportunities);
+		
 			}
 			if (response.arb_opportunities.length !== undefined) {
 				this.mainFlag = true;
 				this.opportunitiesArray = this.massiveHumanTimestamp(response.arb_opportunities);
-
-				console.log(this.opportunitiesArray);
 				this.helpArray = this.massiveHumanTimestamp(response.arb_opportunities);
 				this.profitForArrayOpps(this.opportunitiesArray);
 			} else {
 				this.object = response.arb_opportunities;
-				console.log('object', this.object);
 				this.opportunitiesArray.unshift(this.humanTimeStamp(response.arb_opportunities));
 				this.profitForObjectOpps(this.object);
 				this.opportunitiesArray.pop();
 			}
 
-			// this.opportunitiesArray = response.arb_opportunities;
-			// console.log('1', this.opportunitiesArray);
-			// if (typeof response.arb_opportunities !== 'undefined') {
-			// 	this.object = response.arb_opportunities;
-			// 	console.log('object', this.object);
-			// }
 		});
 	}
 
@@ -303,7 +298,6 @@ export class AppComponent {
 		}
 		let currentDate = new Date().toLocaleString();
 		var fileNameToSaveAs = currentDate + ' logfile';
-		//var textToSave = document.getElementById("inputTextToSave").value;
 		var downloadLink = document.createElement('a');
 		downloadLink.download = fileNameToSaveAs;
 		downloadLink.innerHTML = 'Download File';
@@ -325,6 +319,7 @@ export class AppComponent {
 		}
 		return res;
 	};
+
 
 	getPair(inputArrayOfOpps) {
 		let TradingPair = null;
@@ -379,6 +374,14 @@ export class AppComponent {
 		}
 
 		return inputArrayOfOpps.calculatedProfit, inputArrayOfOpps.calculatedProfitInUSD;
+	}
+
+
+	getCryptoValue(){
+		this.api.getDataFromAPI().subscribe((res)=>{
+			this.btcPrice = JSON.parse(res.EUR);
+			console.log(this.btcPrice)
+		})
 	}
 
 	ngOnDestroy() {
