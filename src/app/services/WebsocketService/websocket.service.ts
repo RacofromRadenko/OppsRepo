@@ -3,6 +3,9 @@ import * as Rx from 'rxjs/Rx';
 
 @Injectable()
 export class WebsocketService {
+	today = new Date();
+	yesterday = new Date();
+
 	constructor() {}
 	private subject: Rx.Subject<MessageEvent>;
 
@@ -25,6 +28,10 @@ export class WebsocketService {
 			return ws.close.bind(ws);
 		});
 
+		setTimeout(() => {
+			this.sendMsg(ws);
+		}, 3000);
+
 		let observer = {
 			next: (data: Object) => {
 				if (ws.readyState === WebSocket.OPEN) {
@@ -35,5 +42,24 @@ export class WebsocketService {
 		};
 
 		return Rx.Subject.create(observer, observable);
+	}
+
+	sendMsg(websocket) {
+		this.yesterday.setDate(this.today.getDate() - 1);
+		let subscribeData = { timeRange: this.getWSDateFormat([ this.today, this.yesterday ]) };
+		websocket.send(JSON.stringify(subscribeData));
+	}
+
+	getWSDateFormat(datesArr) {
+		console.log(datesArr);
+		let results = [];
+		datesArr.forEach((date) => {
+			var month = date.getMonth() + 1;
+			var day = date.getDate();
+			var year = date.getFullYear();
+
+			results.push(`${month}_${day}_${year}`);
+		});
+		return results;
 	}
 }
