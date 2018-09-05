@@ -29,6 +29,8 @@
               <th scope="col" class="heading-scope" >Spread</th>
               <th scope="col" class="heading-scope" >Max volume</th>
               <th scope="col" class="heading-scope" >Profit [%]</th>
+              <th scope="col" class="heading-scope" >Profit of</th>
+              <th scope="col" class="heading-scope" >Profit in [USD]</th>
               <th scope="col" class="heading-scope"  >Time (GMT+2)</th>
       
             </tr>
@@ -43,6 +45,8 @@
                 <td class="table-data">{{oport.Spread}}</td>
                 <td class="table-data">{{oport.MaxVolume}}</td>
                 <td class="table-data">{{oport.Profit}}{{percentage}}</td>
+                <td class="table-data">{{oport.calculatedProfit}}</td>
+                <td class="table-data">{{oport.calculatedProfitInUSD}}</td>
                 <td class="table-data">{{oport.hTimeStamp}}</td>    
               </tr>      
           </tbody>
@@ -63,6 +67,8 @@
                 <th scope="col" class="heading-scope" >Spread</th>
                 <th scope="col" class="heading-scope" >Max volume</th>
                 <th scope="col" class="heading-scope" >Profit [%]</th>
+                <th scope="col" class="heading-scope" >Profit of</th>
+                <th scope="col" class="heading-scope" >Profit in [USD]</th>
                 <th scope="col" class="heading-scope" >Time (GMT+2)</th>
         
               </tr>
@@ -77,6 +83,8 @@
                   <td class="table-data">{{bestInEightHours.Spread}}</td>
                   <td class="table-data">{{bestInEightHours.MaxVolume}}</td>
                   <td class="table-data">{{bestInEightHours.Profit}}{{percentage}}</td>
+                  <td class="table-data">{{bestInEightHours.calculatedProfit}}</td>
+                  <td class="table-data">{{bestInEightHours.calculatedProfitInUSD}}</td>
                   <td class="table-data">{{bestInEightHours.hTimeStamp}}</td>    
                 </tr>      
             </tbody>
@@ -93,6 +101,8 @@
                 <th scope="col" class="heading-scope" >Spread</th>
                 <th scope="col" class="heading-scope" >Max volume</th>
                 <th scope="col" class="heading-scope" >Profit [%]</th>
+                <th scope="col" class="heading-scope" >Profit of</th>
+                <th scope="col" class="heading-scope" >Profit in [USD]</th>
                 <th scope="col" class="heading-scope" >Time (GMT+2)</th>
         
               </tr>
@@ -107,6 +117,8 @@
                   <td class="table-data">{{bestInSixteenHours.Spread}}</td>
                   <td class="table-data">{{bestInSixteenHours.MaxVolume}}</td>
                   <td class="table-data">{{bestInSixteenHours.Profit}}{{percentage}}</td>
+                  <td class="table-data">{{bestInSixteenHours.calculatedProfit}}</td>
+                  <td class="table-data">{{bestInSixteenHours.calculatedProfitInUSD}}</td>
                   <td class="table-data">{{bestInSixteenHours.hTimeStamp}}</td>    
                 </tr>      
             </tbody>
@@ -123,6 +135,8 @@
               <th scope="col" class="heading-scope" >Spread</th>
               <th scope="col" class="heading-scope" >Max volume</th>
               <th scope="col" class="heading-scope" >Profit [%]</th>
+              <th scope="col" class="heading-scope" >Profit of</th>
+              <th scope="col" class="heading-scope" >Profit in [USD]</th>
               <th scope="col" class="heading-scope" >Time (GMT+2)</th>
       
             </tr>
@@ -137,6 +151,8 @@
                 <td class="table-data">{{bestInFourHours.Spread}}</td>
                 <td class="table-data">{{bestInFourHours.MaxVolume}}</td>
                 <td class="table-data">{{bestInFourHours.Profit}}{{percentage}}</td>
+                <td class="table-data">{{bestInFourHours.calculatedProfit}}</td>
+                <td class="table-data">{{bestInFourHours.calculatedProfitInUSD}}</td>
                 <td class="table-data">{{bestInFourHours.hTimeStamp}}</td>    
               </tr>      
           </tbody>
@@ -153,7 +169,9 @@
               <th scope="col" class="heading-scope" >Spread</th>
               <th scope="col" class="heading-scope" >Max volume</th>
               <th scope="col" class="heading-scope" >Profit [%]</th>
-              <th scope="col" class="heading-scope"  >Time (GMT+2)</th>
+              <th scope="col" class="heading-scope" >Profit of</th>
+              <th scope="col" class="heading-scope" >Profit in [USD]</th>
+              <th scope="col" class="heading-scope" >Time (GMT+2)</th>
       
             </tr>
           </thead>
@@ -167,6 +185,8 @@
                 <td class="table-data">{{bestTwelve.Spread}}</td>
                 <td class="table-data">{{bestTwelve.MaxVolume}}</td>
                 <td class="table-data">{{bestTwelve.Profit}}{{percentage}}</td>
+                <td class="table-data">{{bestTwelve.calculatedProfit}}</td>
+                <td class="table-data">{{bestTwelve.calculatedProfitInUSD}}</td>
                 <td class="table-data">{{bestTwelve.hTimeStamp}}</td>    
               </tr>      
           </tbody>
@@ -183,7 +203,9 @@
               <th scope="col" class="heading-scope" >Spread</th>
               <th scope="col" class="heading-scope" >Max volume</th>
               <th scope="col" class="heading-scope" >Profit [%]</th>
-              <th scope="col" class="heading-scope"  >Time (GMT+2)</th>
+              <th scope="col" class="heading-scope" >Profit of</th>
+              <th scope="col" class="heading-scope" >Profit in [USD]</th>
+              <th scope="col" class="heading-scope" >Time (GMT+2)</th>
       
             </tr>
           </thead>
@@ -197,6 +219,8 @@
                 <td class="table-data">{{bestTwelve.Spread}}</td>
                 <td class="table-data">{{bestTwelve.MaxVolume}}</td>
                 <td class="table-data">{{bestTwelve.Profit}}{{percentage}}</td>
+                <td class="table-data">{{bestTwelve.calculatedProfit}}</td>
+                <td class="table-data">{{bestTwelve.calculatedProfitInUSD}}</td>
                 <td class="table-data">{{bestTwelve.hTimeStamp}}</td>    
               </tr>      
           </tbody>

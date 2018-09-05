@@ -15,6 +15,8 @@ export interface Data {
 			MaxVolume: string;
 			Profit: string;
 			Timestamp: string;
+			calculatedProfit: string;
+			calculatedProfitInUSD: string;
 		}
 	];
 }
@@ -26,6 +28,7 @@ export class FetchDataService {
 	constructor(wsService: WebsocketService) {
 		this.dataBE = <Subject<Data>>wsService.connect(environment.URL).map((response): Data => {
 			let data = response.data;
+
 			return {
 				arb_opportunities: JSON.parse(data)
 			};
