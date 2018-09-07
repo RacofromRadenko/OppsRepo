@@ -23,14 +23,23 @@ export interface Data {
 
 @Injectable()
 export class FetchDataService {
-	public dataBE: Subject<Data>;
+	public dataBE;
 	webSocket: WebSocket;
 	constructor(wsService: WebsocketService) {
-		this.dataBE = <Subject<Data>>wsService.connect(environment.URL).map((response): Data => {
+		this.dataBE = wsService.connect(environment.URL).map((response) => {
 			let data = response.data;
-
+			let arb_opportunities = JSON.parse(data);
+			if (Array.isArray(arb_opportunities)) {
+				for (let i = 0; i < arb_opportunities.length; i++) {
+					arb_opportunities[i].calculatedProfit = 0;
+					arb_opportunities[i].calculatedProfitInUSD = 0;
+				}
+			} else {
+				arb_opportunities['calculatedProfit'] = 0;
+				arb_opportunities['calculatedProfitInUSD'] = 0;
+			}
 			return {
-				arb_opportunities: JSON.parse(data)
+				arb_opportunities
 			};
 		});
 	}

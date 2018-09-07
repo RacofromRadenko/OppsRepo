@@ -39,6 +39,7 @@ export class AppComponent {
 	btcUSDPrice: number = null;
 	ethUSDPrice: number = null;
 	convertFromEUROtoUSD: number = null;
+
 	constructor(public fetchFromBE: FetchDataService, public time: TimeServiceService, private api: ApiClientService) {
 		this.fetchDataFromBackend();
 		this.getCryptoValue();
@@ -47,12 +48,9 @@ export class AppComponent {
 
 	fetchDataFromBackend() {
 		this.fetchFromBE.dataBE.subscribe((response) => {
-			for (let i = 0; i < response.arb_opportunities.length; i++) {
-				response.arb_opportunities[i]['calculatedProfit'] = null;
-				response.arb_opportunities[i]['calculatedProfitInUSD'] = null;
-			}
 			if (response.arb_opportunities.length !== undefined) {
 				this.mainFlag = true;
+				// this.getInputArrayOrObject(response.arb_opportunities);
 				this.getPair(response.arb_opportunities);
 				console.log('opps array', response.arb_opportunities);
 				this.opportunitiesArray = this.bestByProfitArrayInUSD(
@@ -62,11 +60,12 @@ export class AppComponent {
 				this.profitForArrayOpps(this.opportunitiesArray);
 			} else {
 				this.getPair(response.arb_opportunities);
+				console.log('...', response.arb_opportunities);
+				// this.bestByProfitObjectInUSD(response.arb_opportunities);
 				this.object = response.arb_opportunities;
+
 				// this.bestsByProfitObjectInUSD(this.object);
-				this.opportunitiesArray.unshift(
-					this.humanTimeStamp(this.bestByProfitArrayInUSD(response.arb_opportunities))
-				);
+				this.opportunitiesArray.unshift(this.humanTimeStamp(response.arb_opportunities));
 				this.profitForObjectOpps(this.object);
 				this.opportunitiesArray.pop();
 			}
@@ -316,6 +315,9 @@ export class AppComponent {
 	};
 
 	getPair(inputArrayOfOpps) {
+		let element;
+		let calculatedProfit;
+		let calculatedProfitInUSD;
 		let TradingPair = null;
 		let lastCharInString = null;
 		let lastThreeCharsInString = null;
@@ -326,44 +328,120 @@ export class AppComponent {
 		let EUR = null;
 		let BTC = null;
 		let ETH = null;
-		for (let i = 0; i < inputArrayOfOpps.length; i++) {
-			TradingPair = inputArrayOfOpps[i].TradingPair;
-			lastCharInString = TradingPair.slice(-1);
-			lastThreeCharsInString = TradingPair.slice(-3);
+		if (inputArrayOfOpps.length !== undefined) {
+			for (let i = 0; i < inputArrayOfOpps.length; i++) {
+				TradingPair = inputArrayOfOpps[i].TradingPair;
+				lastCharInString = TradingPair.slice(-1);
+				lastThreeCharsInString = TradingPair.slice(-3);
+				if (lastCharInString === 'T') {
+					USDT = TradingPair.slice(-4);
+					maxVolume = inputArrayOfOpps[i].MaxVolume;
+					spread = inputArrayOfOpps[i].Spread;
+					inputArrayOfOpps[i].calculatedProfit = (maxVolume * spread).toFixed(8) + ' USDT';
+					inputArrayOfOpps[i].calculatedProfitInUSD = (maxVolume * spread).toFixed(2);
+				} else if (lastThreeCharsInString === 'ETH') {
+					ETH = TradingPair.slice(-3);
+					maxVolume = inputArrayOfOpps[i].MaxVolume;
+					spread = inputArrayOfOpps[i].Spread;
+					inputArrayOfOpps[i].calculatedProfit = (maxVolume * spread).toFixed(8) + ' ETH';
+					inputArrayOfOpps[i].calculatedProfitInUSD = (maxVolume * spread * this.ethUSDPrice).toFixed(2);
+				} else if (lastThreeCharsInString === 'USD') {
+					USD = TradingPair.slice(-3);
+					maxVolume = inputArrayOfOpps[i].MaxVolume;
+					spread = inputArrayOfOpps[i].Spread;
+					inputArrayOfOpps[i].calculatedProfit = (maxVolume * spread).toFixed(8) + ' USD';
+					inputArrayOfOpps[i].calculatedProfitInUSD = (maxVolume * spread).toFixed(2);
+				} else if (lastThreeCharsInString === 'BTC') {
+					BTC = TradingPair.slice(-3);
+					maxVolume = inputArrayOfOpps[i].MaxVolume;
+					spread = inputArrayOfOpps[i].Spread;
+					inputArrayOfOpps[i].calculatedProfit = (maxVolume * spread).toFixed(8) + ' BTC';
+					inputArrayOfOpps[i].calculatedProfitInUSD = (maxVolume * spread * this.btcUSDPrice).toFixed(2);
+				} else if (lastThreeCharsInString === 'EUR') {
+					EUR = TradingPair.slice(-3);
+					maxVolume = inputArrayOfOpps[i].MaxVolume;
+					spread = inputArrayOfOpps[i].Spread;
+					inputArrayOfOpps[i].calculatedProfit = (maxVolume * spread).toFixed(8) + ' EUR';
+					inputArrayOfOpps[i].calculatedProfitInUSD = (maxVolume *
+						spread *
+						this.convertFromEUROtoUSD).toFixed(2);
+				}
+			}
+		} else {
+			element = inputArrayOfOpps;
+			calculatedProfit = inputArrayOfOpps.calculatedProfit;
+			calculatedProfitInUSD = inputArrayOfOpps.calculatedProfitInUSD;
+			element.TradingPair = inputArrayOfOpps.TradingPair;
+			lastCharInString = element.TradingPair.slice(-1);
+			lastThreeCharsInString = element.TradingPair.slice(-3);
 			if (lastCharInString === 'T') {
-				USDT = TradingPair.slice(-4);
-				maxVolume = inputArrayOfOpps[i].MaxVolume;
-				spread = inputArrayOfOpps[i].Spread;
-				inputArrayOfOpps[i].calculatedProfit = (maxVolume * spread).toFixed(8) + ' USDT';
-				inputArrayOfOpps[i].calculatedProfitInUSD = (maxVolume * spread).toFixed(2);
+				USDT = element.TradingPair.slice(-4);
+				maxVolume = inputArrayOfOpps.MaxVolume;
+				spread = inputArrayOfOpps.Spread;
+				calculatedProfit = (maxVolume * spread).toFixed(8) + ' USDT';
+				calculatedProfitInUSD = (maxVolume * spread).toFixed(2);
+
+				element.calculatedProfit = calculatedProfit;
+				if (calculatedProfitInUSD >= 0.5) {
+					element.calculatedProfitInUSD = calculatedProfitInUSD;
+				}
 			} else if (lastThreeCharsInString === 'ETH') {
-				ETH = TradingPair.slice(-3);
-				maxVolume = inputArrayOfOpps[i].MaxVolume;
-				spread = inputArrayOfOpps[i].Spread;
-				inputArrayOfOpps[i].calculatedProfit = (maxVolume * spread).toFixed(8) + ' ETH';
-				inputArrayOfOpps[i].calculatedProfitInUSD = (maxVolume * spread * this.ethUSDPrice).toFixed(2);
+				ETH = element.TradingPair.slice(-3);
+				maxVolume = inputArrayOfOpps.MaxVolume;
+				spread = inputArrayOfOpps.Spread;
+				calculatedProfit = (maxVolume * spread).toFixed(8) + ' ETH';
+				calculatedProfitInUSD = (maxVolume * spread * this.ethUSDPrice).toFixed(2);
+
+				element.calculatedProfit = calculatedProfit;
+				if (calculatedProfitInUSD >= 0.5) {
+					element.calculatedProfitInUSD = calculatedProfitInUSD;
+				}
 			} else if (lastThreeCharsInString === 'USD') {
-				USD = TradingPair.slice(-3);
-				maxVolume = inputArrayOfOpps[i].MaxVolume;
-				spread = inputArrayOfOpps[i].Spread;
-				inputArrayOfOpps[i].calculatedProfit = (maxVolume * spread).toFixed(8) + ' USD';
-				inputArrayOfOpps[i].calculatedProfitInUSD = (maxVolume * spread).toFixed(2);
+				USD = element.TradingPair.slice(-3);
+				maxVolume = inputArrayOfOpps.MaxVolume;
+				spread = inputArrayOfOpps.Spread;
+				calculatedProfit = (maxVolume * spread).toFixed(8) + ' USD';
+				calculatedProfitInUSD = (maxVolume * spread).toFixed(2);
+
+				element.calculatedProfit = calculatedProfit;
+				if (calculatedProfitInUSD >= 0.5) {
+					element.calculatedProfitInUSD = calculatedProfitInUSD;
+				}
 			} else if (lastThreeCharsInString === 'BTC') {
-				BTC = TradingPair.slice(-3);
-				maxVolume = inputArrayOfOpps[i].MaxVolume;
-				spread = inputArrayOfOpps[i].Spread;
-				inputArrayOfOpps[i].calculatedProfit = (maxVolume * spread).toFixed(8) + ' BTC';
-				inputArrayOfOpps[i].calculatedProfitInUSD = (maxVolume * spread * this.btcUSDPrice).toFixed(2);
+				BTC = element.TradingPair.slice(-3);
+				maxVolume = inputArrayOfOpps.MaxVolume;
+				spread = inputArrayOfOpps.Spread;
+				calculatedProfit = (maxVolume * spread).toFixed(8) + ' BTC';
+				calculatedProfitInUSD = (maxVolume * spread * this.btcUSDPrice).toFixed(2);
+				console.log('nedje tu');
+				element.calculatedProfit = calculatedProfit;
+				if (calculatedProfitInUSD >= 0.5) {
+					element.calculatedProfitInUSD = calculatedProfitInUSD;
+				}
 			} else if (lastThreeCharsInString === 'EUR') {
-				EUR = TradingPair.slice(-3);
-				maxVolume = inputArrayOfOpps[i].MaxVolume;
-				spread = inputArrayOfOpps[i].Spread;
-				inputArrayOfOpps[i].calculatedProfit = (maxVolume * spread).toFixed(8) + ' EUR';
-				inputArrayOfOpps[i].calculatedProfitInUSD = (maxVolume * spread * this.convertFromEUROtoUSD).toFixed(2);
+				EUR = element.TradingPair.slice(-3);
+				maxVolume = inputArrayOfOpps.MaxVolume;
+				spread = inputArrayOfOpps.Spread;
+				calculatedProfit = (maxVolume * spread).toFixed(8) + ' EUR';
+				calculatedProfitInUSD = (maxVolume * spread * this.convertFromEUROtoUSD).toFixed(2);
+
+				element.calculatedProfit = calculatedProfit;
+				if (calculatedProfitInUSD >= 0.5) {
+					element.calculatedProfitInUSD = calculatedProfitInUSD;
+				}
 			}
 		}
+	}
 
-		return inputArrayOfOpps.calculatedProfit, inputArrayOfOpps.calculatedProfitInUSD;
+	getInputArrayOrObject(tmpOpps) {
+		let tmpArrayOpps = [];
+		let tmpObjectOpps;
+		tmpArrayOpps = tmpOpps.slice(0);
+		if (Array.isArray(tmpOpps)) {
+			console.log('array');
+		} else {
+			console.log('object');
+		}
 	}
 
 	getCryptoValue() {
@@ -376,13 +454,13 @@ export class AppComponent {
 	fromEUROtoUSD() {
 		this.api.getCurrencyValueEUROBase().subscribe((result) => {
 			this.convertFromEUROtoUSD = JSON.parse(result.rates.USD);
-			console.log('from euro to USD', this.convertFromEUROtoUSD);
 		});
 	}
 
 	bestByProfitArrayInUSD(arr) {
 		let toUSD = ' USD';
 		let res = [];
+		let element;
 		if (arr.length !== undefined) {
 			for (let i = 0; i < arr.length; i++) {
 				if (arr[i].calculatedProfitInUSD >= 0.5) {
@@ -395,15 +473,14 @@ export class AppComponent {
 		return res;
 	}
 
-	bestsByProfitObjectInUSD(obj) {
+	bestByProfitObjectInUSD(obj) {
 		let toUSD = ' USD';
-		let helpObject = obj;
-		console.log('object', obj);
-		if (helpObject.calculatedProfitInUSD >= 0.5) {
-			helpObject = helpObject.calculatedProfitInUSD + toUSD;
-			console.log('help object', helpObject);
+		console.log('calculated Object', obj);
+		if (obj >= 0.5) {
+			let helpObject;
+			helpObject = obj;
+			// console.log('help object', helpObject);
 		}
-		return helpObject;
 	}
 
 	//in progress
